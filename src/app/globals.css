@@ -1,6 +1,18 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
   --color-background: #ffffff;
   --color-foreground: #0c0a09;
   --color-muted: #f5f5f4;
@@ -12,22 +24,57 @@
   --color-accent-hover: #0f766e;
   --color-accent-foreground: #ffffff;
   --color-surface: #fafaf9;
+  --color-surface-elevated: #ffffff;
   --color-destructive: #dc2626;
   --color-success: #16a34a;
+}
 
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
+:root {
+  --shadow-soft-1: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-soft-2: 0 1px 3px 0 rgb(0 0 0 / 0.06);
+  --shadow-pop-1: 0 8px 24px -6px rgb(0 0 0 / 0.10);
+  --shadow-pop-2: 0 2px 6px -1px rgb(0 0 0 / 0.05);
+  --shadow-glow: 0 0 0 4px rgb(13 148 136 / 0.10);
+  --grid-color: rgb(0 0 0 / 0.035);
+  --aurora-1: rgb(13 148 136 / 0.07);
+  --aurora-2: rgb(99 102 241 / 0.06);
+  --aurora-3: rgb(13 148 136 / 0.05);
+}
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
+.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafaf9;
+  --color-muted: #1c1917;
+  --color-muted-foreground: #a8a29e;
+  --color-border: #292524;
+  --color-input: #292524;
+  --color-ring: #14b8a6;
+  --color-accent: #14b8a6;
+  --color-accent-hover: #2dd4bf;
+  --color-accent-foreground: #042f2e;
+  --color-surface: #18181b;
+  --color-surface-elevated: #1f1f23;
+  --color-destructive: #ef4444;
+  --color-success: #22c55e;
+
+  --shadow-soft-1: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-soft-2: 0 0 0 1px rgb(255 255 255 / 0.04) inset;
+  --shadow-pop-1: 0 12px 32px -8px rgb(0 0 0 / 0.7);
+  --shadow-pop-2: 0 0 0 1px rgb(255 255 255 / 0.06) inset;
+  --shadow-glow: 0 0 0 4px rgb(20 184 166 / 0.18);
+  --grid-color: rgb(255 255 255 / 0.035);
+  --aurora-1: rgb(20 184 166 / 0.13);
+  --aurora-2: rgb(129 140 248 / 0.10);
+  --aurora-3: rgb(20 184 166 / 0.08);
+
+  color-scheme: dark;
 }
 
 html {
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -37,7 +84,19 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft-1), var(--shadow-soft-2);
+}
+
+@utility shadow-pop {
+  box-shadow: var(--shadow-pop-1), var(--shadow-pop-2);
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
 }
 
 @utility scroll-thin {
@@ -52,11 +111,15 @@ body {
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: var(--color-muted-foreground);
+    background-color: color-mix(
+      in srgb,
+      var(--color-muted-foreground) 40%,
+      transparent
+    );
     border-radius: 9999px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-foreground);
+    background-color: var(--color-muted-foreground);
   }
 }
 
@@ -66,4 +129,39 @@ body {
   box-shadow:
     0 0 0 2px var(--color-background),
     0 0 0 4px var(--color-ring);
+}
+
+@utility bg-grid {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--grid-color) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+}
+
+@utility bg-canvas {
+  background-image:
+    radial-gradient(
+      circle at 1px 1px,
+      var(--grid-color) 1px,
+      transparent 0
+    ),
+    radial-gradient(circle 800px at 0% 0%, var(--aurora-1), transparent),
+    radial-gradient(circle 1000px at 100% 0%, var(--aurora-2), transparent),
+    radial-gradient(circle 900px at 50% 100%, var(--aurora-3), transparent);
+  background-size:
+    24px 24px,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+  background-attachment: fixed;
+}
+
+@utility bg-radial-fade {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    color-mix(in srgb, var(--color-accent) 8%, transparent),
+    transparent 70%
+  );
 }

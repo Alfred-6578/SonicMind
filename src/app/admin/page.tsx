@@ -25,7 +25,8 @@ function SkeletonRow() {
 }
 
 export default function AdminPage() {
-  const { items, isLoading, uploadingItems, upload, remove } = useDocuments();
+  const { items, isLoading, error, uploadingItems, upload, remove, refresh } =
+    useDocuments();
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DocumentItem | null>(null);
@@ -44,7 +45,14 @@ export default function AdminPage() {
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Documents</h1>
+          <div className="flex items-center gap-2.5">
+            <h1 className="font-serif text-3xl tracking-tight">Documents</h1>
+            {!isLoading && items.length > 0 ? (
+              <span className="rounded-full bg-muted text-muted-foreground text-xs px-2 py-0.5 font-mono tabular-nums">
+                {items.length}
+              </span>
+            ) : null}
+          </div>
           <p className="mt-1 text-sm text-muted-foreground">
             Files powering the chat.
           </p>
@@ -71,6 +79,20 @@ export default function AdminPage() {
             {Array.from({ length: 4 }).map((_, i) => (
               <SkeletonRow key={i} />
             ))}
+          </div>
+        ) : error && items.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-sm text-muted-foreground">
+              Couldn&apos;t load documents.
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{error}</p>
+            <Button
+              variant="secondary"
+              onClick={() => refresh()}
+              className="mt-4"
+            >
+              Try again
+            </Button>
           </div>
         ) : items.length === 0 && uploadingItems.length === 0 ? (
           <AdminEmptyState onUpload={() => setUploadOpen(true)} />

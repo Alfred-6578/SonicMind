@@ -31,7 +31,7 @@ export function ChatShell() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-background">
+    <div className="min-h-dvh flex flex-col bg-background">
       <PublicHeader
         onToggleSidebar={() => setSidebarOpen((o) => !o)}
       />
@@ -56,7 +56,7 @@ export function ChatShell() {
             setSessions(listSessions());
           }}
         />
-        <main className="flex-1 flex flex-col md:ml-72">
+        <main className="flex-1 flex flex-col md:ml-72 bg-canvas">
           <ChatThread
             messages={messages}
             isSending={isSending}

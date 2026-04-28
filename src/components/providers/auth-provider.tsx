@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import {
   clearTokens,
@@ -28,6 +30,7 @@ export type AuthContextValue = {
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);
@@ -46,6 +49,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    const handler = () => {
+      window.localStorage.removeItem(USER_KEY);
+      setUser(null);
+      setIsAuthed(false);
+      toast.error("Session expired");
+      router.push("/login");
+    };
+    window.addEventListener("sm:unauthorized", handler);
+    return () => window.removeEventListener("sm:unauthorized", handler);
+  }, [router]);
 
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });

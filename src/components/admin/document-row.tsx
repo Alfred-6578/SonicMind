@@ -47,7 +47,7 @@ export function DocumentRow({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
       className={cn(
-        "group flex items-center gap-4 px-4 py-3 rounded-xl border border-border bg-surface hover:border-accent/30 transition-colors",
+        "group flex items-center gap-4 px-4 py-3 rounded-xl border border-border bg-surface hover:border-accent/30 hover:shadow-soft hover:bg-accent/4 transition-all",
         isUploading && "opacity-70 pointer-events-none",
       )}
     >

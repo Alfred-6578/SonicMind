@@ -122,6 +122,9 @@ export async function request<T>(
         // ignore
       }
       clearTokens();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("sm:unauthorized"));
+      }
       throw new ApiError(extractMessage(body), res.status, body);
     }
   }
