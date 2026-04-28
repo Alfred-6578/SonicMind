@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { Toaster } from "@/components/providers/toaster";
 import "./globals.css";
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans`}
       >
-        <LenisProvider>{children}</LenisProvider>
+        <LenisProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </LenisProvider>
         <Toaster />
       </body>
     </html>

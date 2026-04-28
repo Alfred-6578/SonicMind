@@ -59,9 +59,9 @@ export function ChatShell() {
             messages={messages}
             isSending={isSending}
             isLoadingHistory={isLoadingHistory}
-            onPickSuggestion={(t) => {
-              send(t);
-              setTimeout(() => setSessions(listSessions()), 0);
+            onPickSuggestion={async (t) => {
+              await send(t);
+              setSessions(listSessions());
             }}
           />
           <ChatInput
