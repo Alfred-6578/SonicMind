@@ -17,6 +17,11 @@ export type AuthContextValue = {
   isLoading: boolean;
   isAuthed: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -50,6 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthed(true);
   };
 
+  const register = async (name: string, email: string, password: string) => {
+    const res = await authApi.register({ name, email, password });
+    setTokens(res.access_token, res.refresh_token);
+    window.localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+    setUser(res.user);
+    setIsAuthed(true);
+  };
+
   const logout = async () => {
     const refresh = getRefreshToken();
     if (refresh) {
@@ -67,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, isAuthed, login, logout }}
+      value={{ user, isLoading, isAuthed, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

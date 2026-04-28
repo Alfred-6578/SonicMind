@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useChat } from "@/hooks/use-chat";
 import { useMobile } from "@/hooks/use-mobile";
 import { listSessions } from "@/lib/chat/local-sessions";
@@ -24,9 +24,11 @@ export function ChatShell() {
 
   const isMobile = useMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sessions, setSessions] = useState<LocalSession[]>(() =>
-    listSessions(),
-  );
+  const [sessions, setSessions] = useState<LocalSession[]>([]);
+
+  useEffect(() => {
+    setSessions(listSessions());
+  }, []);
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
