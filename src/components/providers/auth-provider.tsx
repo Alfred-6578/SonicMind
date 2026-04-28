@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import {
   clearTokens,
@@ -17,12 +19,18 @@ export type AuthContextValue = {
   isLoading: boolean;
   isAuthed: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);
@@ -42,8 +50,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const handler = () => {
+      window.localStorage.removeItem(USER_KEY);
+      setUser(null);
+      setIsAuthed(false);
+      toast.error("Session expired");
+      router.push("/login");
+    };
+    window.addEventListener("sm:unauthorized", handler);
+    return () => window.removeEventListener("sm:unauthorized", handler);
+  }, [router]);
+
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
+    setTokens(res.access_token, res.refresh_token);
+    window.localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+    setUser(res.user);
+    setIsAuthed(true);
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    const res = await authApi.register({ name, email, password });
     setTokens(res.access_token, res.refresh_token);
     window.localStorage.setItem(USER_KEY, JSON.stringify(res.user));
     setUser(res.user);
@@ -67,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, isAuthed, login, logout }}
+      value={{ user, isLoading, isAuthed, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

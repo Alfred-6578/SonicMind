@@ -13,7 +13,7 @@ export default function AdminLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -22,7 +22,7 @@ export default function AdminLayout({
   return (
     <>
       <AdminHeader />
-      <main className="max-w-screen-xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </>
   );
 }

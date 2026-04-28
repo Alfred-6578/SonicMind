@@ -11,24 +11,43 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRedirectIfAuthed } from "@/lib/auth/guards";
 import { extractMessage } from "@/lib/api/errors";
 
-export function LoginForm() {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function RegisterForm() {
   useRedirectIfAuthed();
   const router = useRouter();
-  const { login } = useAuth();
+  const { register } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorKey, setErrorKey] = useState(0);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const valid =
+      trimmedName.length > 0 &&
+      trimmedEmail.length > 0 &&
+      password.length > 0 &&
+      EMAIL_RE.test(trimmedEmail) &&
+      password.length >= 8;
+
+    if (!valid) {
+      setError("Please check your details");
+      setErrorKey((k) => k + 1);
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
     try {
-      await login(email, password);
+      await register(trimmedName, trimmedEmail, password);
       router.push("/admin");
     } catch (err) {
       setError(extractMessage(err));
@@ -51,16 +70,30 @@ export function LoginForm() {
         transition={{ duration: 0.4 }}
         className="rounded-2xl border border-border bg-background p-8 shadow-soft"
       >
-        <h1 className="text-xl font-semibold tracking-tight">Welcome back</h1>
+        <h1 className="text-xl font-semibold tracking-tight">
+          Create admin account
+        </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Sign in to manage your knowledge base.
+          Set up the admin who manages this knowledge base.
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="reg-name">Name</Label>
             <Input
-              id="email"
+              id="reg-name"
+              type="text"
+              required
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="reg-email">Email</Label>
+            <Input
+              id="reg-email"
               type="email"
               required
               autoComplete="email"
@@ -70,15 +103,19 @@ export function LoginForm() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="reg-password">Password</Label>
             <Input
-              id="password"
+              id="reg-password"
               type="password"
               required
-              autoComplete="current-password"
+              minLength={8}
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <p className="text-[11px] text-muted-foreground">
+              At least 8 characters.
+            </p>
           </div>
 
           {error ? (
@@ -93,31 +130,19 @@ export function LoginForm() {
             className="w-full"
             loading={isSubmitting}
           >
-            Sign in
+            Create account
           </Button>
         </form>
 
-        <div className="mt-6 text-xs text-muted-foreground text-center">
-          <p>
-            Visitors don&apos;t need an account — head back to{" "}
-            <Link
-              href="/"
-              className="text-foreground hover:text-accent underline-offset-2 hover:underline"
-            >
-              chat
-            </Link>
-            .
-          </p>
-          <p className="mt-2">
-            First time setting up?{" "}
-            <Link
-              href="/register"
-              className="text-foreground hover:text-accent underline-offset-2 hover:underline"
-            >
-              Create admin account
-            </Link>
-          </p>
-        </div>
+        <p className="mt-6 text-xs text-muted-foreground text-center">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-foreground hover:text-accent underline-offset-2 hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
       </motion.div>
     </motion.div>
   );

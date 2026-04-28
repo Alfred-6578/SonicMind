@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LoginForm } from "@/components/auth/login-form";
+import { RegisterForm } from "@/components/auth/register-form";
 import { BrandPanel } from "@/components/auth/brand-panel";
 import { BrandMark } from "@/components/ui/brand-mark";
 
 export const metadata: Metadata = {
-  title: "Sign in — SonicMind",
+  title: "Create account — SonicMind",
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="min-h-dvh grid lg:grid-cols-2 bg-background">
       <BrandPanel
-        heading="Welcome back."
-        taglinePrefix="Sign in to manage"
-        taglineHighlight="the knowledge base"
+        heading="Create your space."
+        taglinePrefix="Set up the admin who owns the"
+        taglineHighlight="knowledge base"
         taglineSuffix=" — uploads, retrievals, and the chat surface visitors see."
-        pullquote="Built for teams who want answers grounded in their own documents."
+        pullquote="First-time setup takes under a minute."
       />
       <main className="flex flex-col px-6 py-12 lg:p-12">
         <Link
@@ -29,7 +29,7 @@ export default function LoginPage() {
           </span>
         </Link>
         <div className="flex-1 flex items-center justify-center">
-          <LoginForm />
+          <RegisterForm />
         </div>
       </main>
     </div>

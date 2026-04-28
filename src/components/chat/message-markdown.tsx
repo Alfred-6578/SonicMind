@@ -77,7 +77,7 @@ const components: Components = {
   pre: ({ className, ...props }) => (
     <pre
       className={cn(
-        "rounded-lg bg-foreground text-background p-4 overflow-x-auto text-sm font-mono my-3",
+        "rounded-lg bg-foreground text-background dark:bg-surface-elevated dark:text-foreground p-4 overflow-x-auto text-sm font-mono my-3",
         className,
       )}
       {...props}
