@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { AdminEmptyState } from "@/components/admin/empty-state";
 import { DeleteDialog } from "@/components/admin/delete-dialog";
 import { DocumentTable } from "@/components/admin/document-table";
+import { PreviewDialog } from "@/components/admin/preview-dialog";
 import { UploadDialog } from "@/components/admin/upload-dialog";
 import { useDocuments } from "@/hooks/use-documents";
 import type { DocumentItem } from "@/types/document";
@@ -30,6 +31,9 @@ export default function AdminPage() {
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DocumentItem | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<DocumentItem | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
 
   const filtered = items.filter((i) => {
@@ -103,6 +107,9 @@ export default function AdminPage() {
             onDelete={(id) =>
               setDeleteTarget(items.find((i) => i.id === id) ?? null)
             }
+            onPreview={(id) =>
+              setPreviewTarget(items.find((i) => i.id === id) ?? null)
+            }
           />
         )}
       </div>
@@ -113,6 +120,12 @@ export default function AdminPage() {
         onUpload={async (p) => {
           await upload(p);
         }}
+      />
+
+      <PreviewDialog
+        open={!!previewTarget}
+        onOpenChange={(o) => !o && setPreviewTarget(null)}
+        item={previewTarget}
       />
 
       <DeleteDialog

@@ -15,6 +15,10 @@ if (!BASE_URL && process.env.NODE_ENV === "development") {
   );
 }
 
+export function documentDownloadUrl(documentId: string): string {
+  return `${BASE_URL}/documents/${documentId}/download`;
+}
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: unknown;
