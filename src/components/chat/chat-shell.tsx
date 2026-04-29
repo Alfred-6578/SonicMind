@@ -5,6 +5,7 @@ import { useChat } from "@/hooks/use-chat";
 import { useMobile } from "@/hooks/use-mobile";
 import { listSessions } from "@/lib/chat/local-sessions";
 import { PublicHeader } from "@/components/layout/public-header";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatThread } from "./chat-thread";
 import { ChatInput } from "./chat-input";
@@ -25,6 +26,9 @@ export function ChatShell() {
   const isMobile = useMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sessions, setSessions] = useState<LocalSession[]>([]);
+  const [pendingDelete, setPendingDelete] = useState<LocalSession | null>(
+    null,
+  );
 
   useEffect(() => {
     setSessions(listSessions());
@@ -52,8 +56,8 @@ export function ChatShell() {
             setSidebarOpen(false);
           }}
           onDeleteSession={(id) => {
-            deleteLocalSession(id);
-            setSessions(listSessions());
+            const session = sessions.find((s) => s.session_id === id);
+            if (session) setPendingDelete(session);
           }}
         />
         <main className="flex-1 flex flex-col md:ml-72 bg-canvas">
@@ -75,6 +79,33 @@ export function ChatShell() {
           />
         </main>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onOpenChange={(o) => !o && setPendingDelete(null)}
+        title="Delete chat?"
+        description={
+          pendingDelete ? (
+            <>
+              <span className="block font-medium text-foreground mb-2">
+                {pendingDelete.title}
+              </span>
+              <span className="block">
+                This conversation will be removed from your local list. The
+                server-side history is unaffected.
+              </span>
+            </>
+          ) : null
+        }
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => {
+          if (pendingDelete) {
+            deleteLocalSession(pendingDelete.session_id);
+            setSessions(listSessions());
+          }
+        }}
+      />
     </div>
   );
 }

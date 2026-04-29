@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
-import { File, FileCode, FileText, Trash2 } from "lucide-react";
+import {
+  Download,
+  Eye,
+  File,
+  FileCode,
+  FileText,
+  Trash2,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
 import { Spinner } from "@/components/ui/spinner";
@@ -10,12 +17,14 @@ import {
   formatRelativeTime,
   formatTokens,
 } from "@/lib/utils/format";
+import { documentDownloadUrl } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 import type { DocumentItem } from "@/types/document";
 
 type Props = {
   item: DocumentItem;
   onDelete: (id: string) => void;
+  onPreview: (id: string) => void;
   isUploading?: boolean;
   uploadStatus?: "uploading" | "processing";
 };
@@ -32,6 +41,7 @@ function iconFor(fileType: string) {
 export function DocumentRow({
   item,
   onDelete,
+  onPreview,
   isUploading,
   uploadStatus,
 }: Props) {
@@ -80,16 +90,38 @@ export function DocumentRow({
           </span>
         </div>
       ) : (
-        <IconButton
-          aria-label="Delete document"
-          className="text-muted-foreground hover:text-destructive md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(item.id);
-          }}
-        >
-          <Trash2 className="h-4 w-4" />
-        </IconButton>
+        <div className="flex items-center gap-0.5 shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+          <button
+            type="button"
+            aria-label="Preview document"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPreview(item.id);
+            }}
+            className="h-9 w-9 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
+          <a
+            href={documentDownloadUrl(item.id)}
+            download={`${item.name}${item.file_type}`}
+            aria-label="Download document"
+            onClick={(e) => e.stopPropagation()}
+            className="h-9 w-9 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Download className="h-4 w-4" />
+          </a>
+          <IconButton
+            aria-label="Delete document"
+            className="text-muted-foreground hover:text-destructive transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(item.id);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </IconButton>
+        </div>
       )}
     </motion.div>
   );
