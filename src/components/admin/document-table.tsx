@@ -11,6 +11,7 @@ type Props = {
   items: DocumentItem[];
   uploadingItems: UploadingItem[];
   onDelete: (id: string) => void;
+  onPreview: (id: string) => void;
 };
 
 function placeholderItem(u: UploadingItem): DocumentItem {
@@ -34,7 +35,12 @@ function placeholderItem(u: UploadingItem): DocumentItem {
   };
 }
 
-export function DocumentTable({ items, uploadingItems, onDelete }: Props) {
+export function DocumentTable({
+  items,
+  uploadingItems,
+  onDelete,
+  onPreview,
+}: Props) {
   return (
     <div className="flex flex-col gap-2">
       {uploadingItems.map((u) => (
@@ -42,12 +48,18 @@ export function DocumentTable({ items, uploadingItems, onDelete }: Props) {
           key={u.tempId}
           item={placeholderItem(u)}
           onDelete={onDelete}
+          onPreview={onPreview}
           isUploading
           uploadStatus={u.status}
         />
       ))}
       {items.map((item) => (
-        <DocumentRow key={item.id} item={item} onDelete={onDelete} />
+        <DocumentRow
+          key={item.id}
+          item={item}
+          onDelete={onDelete}
+          onPreview={onPreview}
+        />
       ))}
     </div>
   );

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ChevronDown, FileText } from "lucide-react";
+import { ChevronDown, ExternalLink, FileText } from "lucide-react";
 import { formatScore } from "@/lib/utils/format";
+import { documentDownloadUrl } from "@/lib/api/client";
 import type { Source } from "@/types/chat";
 
 type Props = { sources: Source[] };
@@ -48,9 +49,12 @@ export function SourcesBlock({ sources }: Props) {
             const { document_info: doc, chunk_info: chunk } = s;
             const pct = scorePct(chunk.score);
             return (
-              <div
+              <a
                 key={`${doc.document_id}-${chunk.chunk_id}-${i}`}
-                className="rounded-xl border border-border bg-surface hover:border-accent/30 hover:bg-accent/4 transition-all p-3.5 group"
+                href={documentDownloadUrl(doc.document_id)}
+                target="_blank"
+                rel="noopener"
+                className="rounded-xl border border-border bg-surface hover:border-accent/30 hover:bg-accent/4 transition-all p-3.5 group block"
               >
                 <div className="flex items-start justify-between gap-2 min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0">
@@ -74,12 +78,20 @@ export function SourcesBlock({ sources }: Props) {
                 <p className="text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
                   {chunk.content_preview}
                 </p>
-                {doc.author ? (
-                  <p className="text-[11px] text-muted-foreground/70 mt-2">
-                    {doc.author}
-                  </p>
-                ) : null}
-              </div>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  {doc.author ? (
+                    <span className="text-[11px] text-muted-foreground/70 truncate">
+                      {doc.author}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-accent transition-colors">
+                    Open
+                    <ExternalLink className="h-2.5 w-2.5" />
+                  </span>
+                </div>
+              </a>
             );
           })}
         </div>

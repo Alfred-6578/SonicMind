@@ -55,3 +55,19 @@ export type LocalSession = {
 
 // What the UI renders — Message plus optional sources (live messages only)
 export type MessageView = Message & { sources?: Source[] };
+
+// Admin "all sessions" list response
+export type AdminSession = {
+  id: string;
+  name: string | null;
+  description: string | null;
+  document_ids: string[];
+  total_tokens: number;
+  total_messages: number;
+  total_cost: number;
+  is_active: boolean;
+  archived_at: string | null;
+  user_id: string | null;
+  created_at: string;
+  updated_at: string;
+};

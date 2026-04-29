@@ -15,6 +15,7 @@ export type DocumentItem = {
   is_processed: boolean;
   created_at: string;
   updated_at: string;
+  download_url?: string;
 };
 
 export type UploadPayload = {
