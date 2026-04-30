@@ -53,7 +53,7 @@ export function DeleteDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        <DialogFooter className="flex gap-5">
           <Button
             type="button"
             variant="secondary"

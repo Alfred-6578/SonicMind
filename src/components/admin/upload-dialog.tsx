@@ -266,7 +266,7 @@ export function UploadDialog({ open, onOpenChange, onUpload }: Props) {
               />
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex gap-5">
               <Button
                 type="button"
                 variant="secondary"
